@@ -1,0 +1,769 @@
+app/
+-     page.tsk
+componentes/
+-     balance-inteligente-screen.tsx
+-     bottom-navigation.tsx
+-     dashboard-screen.tsx
+-     modo-conservar-screen.tsx
+-     perfil-screen.tsx
+-     plan-financiero-screen.tsx
+
+
+
+
+
+
+
+
+page.tsk
+"use client"
+
+import { useState } from "react"
+import { DashboardScreen } from "@/components/dashboard-screen"
+import { PlanFinancieroScreen } from "@/components/plan-financiero-screen"
+import { BalanceInteligenteScreen } from "@/components/balance-inteligente-screen"
+import { ModoConservarScreen } from "@/components/modo-conservar-screen"
+import { PerfilScreen } from "@/components/perfil-screen"
+import { BottomNavigation } from "@/components/bottom-navigation"
+
+export default function BancoDigitalApp() {
+  const [activeScreen, setActiveScreen] = useState("inicio")
+  const [saldoActual] = useState(15420.5)
+  const [modoConservar] = useState(saldoActual < 5000)
+
+  const renderScreen = () => {
+    switch (activeScreen) {
+      case "inicio":
+        return <DashboardScreen saldoActual={saldoActual} modoConservar={modoConservar} />
+      case "pagos":
+        return <PlanFinancieroScreen />
+      case "finanzas":
+        return <BalanceInteligenteScreen saldoActual={saldoActual} />
+      case "perfil":
+        return <PerfilScreen />
+      case "conservar":
+        return <ModoConservarScreen />
+      default:
+        return <DashboardScreen saldoActual={saldoActual} modoConservar={modoConservar} />
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      <div className="max-w-sm mx-auto bg-gray-900 min-h-screen relative">
+        {renderScreen()}
+        <BottomNavigation activeScreen={activeScreen} onScreenChange={setActiveScreen} modoConservar={modoConservar} />
+      </div>
+    </div>
+  )
+}
+
+
+
+
+balance-inteligente-screen.tsx
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { TrendingUp, PiggyBank, AlertTriangle } from "lucide-react"
+
+interface BalanceInteligenteScreenProps {
+  saldoActual: number
+}
+
+export function BalanceInteligenteScreen({ saldoActual }: BalanceInteligenteScreenProps) {
+  const saldoProyectado = saldoActual + 2300 // Simulación
+  const esSaldoBajo = saldoProyectado < 10000
+  const esSaldoAlto = saldoProyectado > 20000
+
+  return (
+    <div className="p-4 pb-20 space-y-6">
+      {/* Header */}
+      <div className="pt-8">
+        <h1 className="text-2xl font-light text-gray-100">Balance Inteligente</h1>
+        <p className="text-gray-400 text-sm">Análisis y recomendaciones personalizadas</p>
+      </div>
+
+      {/* Análisis del Saldo */}
+      <Card className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 border-blue-800/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg text-gray-100 flex items-center">
+            <TrendingUp className="w-5 h-5 mr-2 text-blue-400" />
+            Proyección de Saldo
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-gray-400 text-xs">Saldo actual</p>
+              <p className="text-white font-medium text-lg">${saldoActual.toLocaleString()}</p>
+            </div>
+            <div>
+              <p className="text-gray-400 text-xs">Proyectado (7 días)</p>
+              <p className="text-blue-400 font-medium text-lg">${saldoProyectado.toLocaleString()}</p>
+            </div>
+          </div>
+
+          <div className="bg-blue-900/20 rounded-lg p-3">
+            <p className="text-blue-400 text-sm">Tu saldo aumentará aproximadamente $2,300 en los próximos 7 días</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Recomendaciones Inteligentes */}
+      {esSaldoAlto && (
+        <div className="space-y-3">
+          <h2 className="text-lg font-medium text-gray-100">Oportunidades de Crecimiento</h2>
+
+          <Card className="bg-gradient-to-r from-emerald-900/20 to-teal-900/20 border-emerald-800/30">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                    <PiggyBank className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Ahorro Inteligente</p>
+                    <p className="text-gray-400 text-sm">Rendimiento 8.5% anual</p>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" className="border-emerald-600 text-emerald-400">
+                  Ahorrar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-purple-900/20 to-pink-900/20 border-purple-800/30">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-purple-900/30 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Inversión Diversificada</p>
+                    <p className="text-gray-400 text-sm">Portafolio balanceado</p>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" className="border-purple-600 text-purple-400">
+                  Invertir
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {esSaldoBajo && (
+        <div className="space-y-3">
+          <h2 className="text-lg font-medium text-gray-100">Alertas y Soluciones</h2>
+
+          <Card className="bg-gradient-to-r from-amber-900/20 to-orange-900/20 border-amber-800/30">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-3 mb-3">
+                <AlertTriangle className="w-5 h-5 text-amber-400" />
+                <p className="text-amber-400 font-medium">Saldo proyectado bajo</p>
+              </div>
+              <p className="text-gray-300 text-sm mb-3">
+                Tu saldo podría ser insuficiente para cubrir gastos recurrentes
+              </p>
+              <div className="space-y-2">
+                <Button size="sm" className="w-full bg-amber-600 hover:bg-amber-700">
+                  Activar Modo Conservar
+                </Button>
+                <Button size="sm" variant="outline" className="w-full border-amber-600 text-amber-400">
+                  Ver Microcréditos
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Análisis de Gastos */}
+      <Card className="bg-gray-800/50 border-gray-700">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg text-gray-100">Análisis de Gastos</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                <span className="text-gray-300 text-sm">Alimentación</span>
+              </div>
+              <div className="text-right">
+                <p className="text-white text-sm">$2,450</p>
+                <p className="text-gray-400 text-xs">35%</p>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
+                <span className="text-gray-300 text-sm">Transporte</span>
+              </div>
+              <div className="text-right">
+                <p className="text-white text-sm">$1,200</p>
+                <p className="text-gray-400 text-xs">17%</p>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                <span className="text-gray-300 text-sm">Entretenimiento</span>
+              </div>
+              <div className="text-right">
+                <p className="text-white text-sm">$800</p>
+                <p className="text-gray-400 text-xs">11%</p>
+              </div>
+            </div>
+          </div>
+
+          <Badge variant="outline" className="bg-blue-900/20 text-blue-400 border-blue-600">
+            Gastos similares al mes anterior
+          </Badge>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+
+
+bottom-navigation.tsk
+"use client"
+
+import { Home, CreditCard, TrendingUp, User, Bell, Shield } from "lucide-react"
+
+interface BottomNavigationProps {
+  activeScreen: string
+  onScreenChange: (screen: string) => void
+  modoConservar: boolean
+}
+
+export function BottomNavigation({ activeScreen, onScreenChange, modoConservar }: BottomNavigationProps) {
+  const navItems = [
+    { id: "inicio", icon: Home, label: "Inicio" },
+    { id: "pagos", icon: CreditCard, label: "Pagos" },
+    { id: "finanzas", icon: TrendingUp, label: "Finanzas" },
+    { id: "perfil", icon: User, label: "Perfil" },
+    { id: "notificaciones", icon: Bell, label: "Alertas" },
+  ]
+
+  // En modo conservar, reemplazamos "Alertas" con "Conservar"
+  if (modoConservar) {
+    navItems[4] = { id: "conservar", icon: Shield, label: "Conservar" }
+  }
+
+  return (
+    <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm bg-gray-800/95 backdrop-blur-sm border-t border-gray-700">
+      <div className="flex justify-around py-2">
+        {navItems.map((item) => {
+          const Icon = item.icon
+          const isActive = activeScreen === item.id
+
+          return (
+            <button
+              key={item.id}
+              onClick={() => onScreenChange(item.id)}
+              className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+                isActive ? "text-purple-400 bg-purple-900/20" : "text-gray-400 hover:text-gray-300"
+              }`}
+            >
+              <Icon className="w-5 h-5 mb-1" />
+              <span className="text-xs">{item.label}</span>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+
+
+
+
+dashboard-screen.tsk
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { CreditCard, TrendingUp, AlertTriangle, Plus } from "lucide-react"
+
+interface DashboardScreenProps {
+  saldoActual: number
+  modoConservar: boolean
+}
+
+export function DashboardScreen({ saldoActual, modoConservar }: DashboardScreenProps) {
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("es-MX", {
+      style: "currency",
+      currency: "MXN",
+    }).format(amount)
+  }
+
+  return (
+    <div className="p-4 pb-20 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between pt-8">
+        <div>
+          <h1 className="text-2xl font-light text-gray-100">Hola, María</h1>
+          <p className="text-gray-400 text-sm">Buen día</p>
+        </div>
+        {modoConservar && (
+          <Badge variant="outline" className="bg-amber-900/20 text-amber-400 border-amber-600">
+            <AlertTriangle className="w-3 h-3 mr-1" />
+            Modo Conservar
+          </Badge>
+        )}
+      </div>
+
+      {/* Saldo Principal */}
+      <Card className="bg-gradient-to-br from-purple-900/40 to-blue-900/40 border-purple-800/30">
+        <CardContent className="p-6">
+          <div className="space-y-2">
+            <p className="text-gray-300 text-sm">Saldo total</p>
+            <p className="text-3xl font-light text-white">{formatCurrency(saldoActual)}</p>
+          </div>
+          <div className="flex justify-between mt-4 pt-4 border-t border-purple-800/30">
+            <div className="text-center">
+              <p className="text-purple-300 text-xs">Monedas</p>
+              <p className="text-white font-medium">2,450</p>
+            </div>
+            <div className="text-center">
+              <p className="text-purple-300 text-xs">Referidos</p>
+              <p className="text-white font-medium">12</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Productos Contratados */}
+      <div className="space-y-3">
+        <h2 className="text-lg font-medium text-gray-100">Mis productos</h2>
+
+        <Card className="bg-gray-800/50 border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-green-900/30 rounded-lg flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-green-400" />
+                </div>
+                <div>
+                  <p className="text-white font-medium">Cuenta Hey</p>
+                  <p className="text-gray-400 text-sm">**** 4521</p>
+                </div>
+              </div>
+              <p className="text-green-400 font-medium">{formatCurrency(saldoActual)}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gray-800/50 border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-blue-900/30 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-white font-medium">Crédito Personal</p>
+                  <p className="text-gray-400 text-sm">Disponible: $25,000</p>
+                </div>
+              </div>
+              <p className="text-blue-400 font-medium">8.9%</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Productos Sugeridos */}
+      {!modoConservar && (
+        <div className="space-y-3">
+          <h2 className="text-lg font-medium text-gray-100">Recomendado para ti</h2>
+
+          <Card className="bg-gradient-to-r from-orange-900/20 to-red-900/20 border-orange-800/30">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-orange-900/30 rounded-lg flex items-center justify-center">
+                    <Plus className="w-5 h-5 text-orange-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Tarjeta de Crédito</p>
+                    <p className="text-gray-400 text-sm">Sin anualidad</p>
+                  </div>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-orange-600 text-orange-400 hover:bg-orange-900/20"
+                >
+                  Solicitar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-emerald-900/20 to-teal-900/20 border-emerald-800/30">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Inversión Hey</p>
+                    <p className="text-gray-400 text-sm">Desde $100</p>
+                  </div>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-emerald-600 text-emerald-400 hover:bg-emerald-900/20"
+                >
+                  Invertir
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </div>
+  )
+}
+
+
+modo-conservar-screen.tsk
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Shield, Calendar, DollarSign } from "lucide-react"
+
+export function ModoConservarScreen() {
+  const montoSugeridoDiario = 180
+  const diasRestantes = 12
+
+  return (
+    <div className="p-4 pb-20 space-y-6">
+      {/* Header Minimalista */}
+      <div className="pt-8">
+        <div className="flex items-center space-x-2 mb-2">
+          <Shield className="w-6 h-6 text-amber-400" />
+          <h1 className="text-2xl font-light text-gray-100">Modo Conservar</h1>
+        </div>
+        <Badge variant="outline" className="bg-amber-900/20 text-amber-400 border-amber-600">
+          Activado automáticamente
+        </Badge>
+      </div>
+
+      {/* Presupuesto Diario */}
+      <Card className="bg-gradient-to-br from-amber-900/30 to-orange-900/30 border-amber-800/30">
+        <CardContent className="p-6 text-center">
+          <div className="space-y-2">
+            <p className="text-amber-300 text-sm">Presupuesto sugerido hoy</p>
+            <p className="text-4xl font-light text-white">${montoSugeridoDiario}</p>
+            <p className="text-gray-400 text-xs">Para mantener estabilidad financiera</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Pagos Próximos */}
+      <Card className="bg-gray-800/50 border-gray-700">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg text-gray-100 flex items-center">
+            <Calendar className="w-5 h-5 mr-2 text-blue-400" />
+            Pagos Importantes
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex justify-between items-center p-3 bg-red-900/20 rounded-lg border border-red-800/30">
+            <div>
+              <p className="text-white font-medium">Renta</p>
+              <p className="text-gray-400 text-sm">Vence en 3 días</p>
+            </div>
+            <p className="text-red-400 font-medium">$8,500</p>
+          </div>
+
+          <div className="flex justify-between items-center p-3 bg-orange-900/20 rounded-lg border border-orange-800/30">
+            <div>
+              <p className="text-white font-medium">Tarjeta de Crédito</p>
+              <p className="text-gray-400 text-sm">Vence en 8 días</p>
+            </div>
+            <p className="text-orange-400 font-medium">$2,300</p>
+          </div>
+
+          <div className="flex justify-between items-center p-3 bg-blue-900/20 rounded-lg border border-blue-800/30">
+            <div>
+              <p className="text-white font-medium">Servicios</p>
+              <p className="text-gray-400 text-sm">Vence en 15 días</p>
+            </div>
+            <p className="text-blue-400 font-medium">$1,200</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Recomendaciones de Ahorro */}
+      <Card className="bg-gray-800/50 border-gray-700">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg text-gray-100">Consejos de Ahorro</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="bg-green-900/20 rounded-lg p-3 border border-green-800/30">
+            <p className="text-green-400 text-sm">✓ Limita gastos en entretenimiento</p>
+          </div>
+          <div className="bg-green-900/20 rounded-lg p-3 border border-green-800/30">
+            <p className="text-green-400 text-sm">✓ Usa transporte público</p>
+          </div>
+          <div className="bg-green-900/20 rounded-lg p-3 border border-green-800/30">
+            <p className="text-green-400 text-sm">✓ Cocina en casa más seguido</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Acciones Rápidas */}
+      <div className="space-y-3">
+        <Button className="w-full bg-amber-600 hover:bg-amber-700">
+          <DollarSign className="w-4 h-4 mr-2" />
+          Ver Microcréditos Disponibles
+        </Button>
+        <Button variant="outline" className="w-full border-gray-600 text-gray-300">
+          Desactivar Modo Conservar
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+
+
+perfil-scren.tsk
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { User, Settings, CreditCard, Shield, HelpCircle, LogOut } from "lucide-react"
+
+export function PerfilScreen() {
+  return (
+    <div className="p-4 pb-20 space-y-6">
+      {/* Header */}
+      <div className="pt-8">
+        <h1 className="text-2xl font-light text-gray-100">Perfil</h1>
+        <p className="text-gray-400 text-sm">Configuración y preferencias</p>
+      </div>
+
+      {/* Información del Usuario */}
+      <Card className="bg-gray-800/50 border-gray-700">
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 bg-purple-900/30 rounded-full flex items-center justify-center">
+              <User className="w-8 h-8 text-purple-400" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-xl font-medium text-white">María González</h2>
+              <p className="text-gray-400">maria.gonzalez@email.com</p>
+              <Badge variant="outline" className="mt-2 bg-green-900/20 text-green-400 border-green-600">
+                Cuenta Verificada
+              </Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Opciones del Perfil */}
+      <div className="space-y-3">
+        <Card className="bg-gray-800/50 border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Settings className="w-5 h-5 text-gray-400" />
+                <span className="text-white">Configuración</span>
+              </div>
+              <span className="text-gray-400">{">"}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gray-800/50 border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <CreditCard className="w-5 h-5 text-gray-400" />
+                <span className="text-white">Mis Tarjetas</span>
+              </div>
+              <span className="text-gray-400">{">"}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gray-800/50 border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Shield className="w-5 h-5 text-gray-400" />
+                <span className="text-white">Seguridad</span>
+              </div>
+              <span className="text-gray-400">{">"}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gray-800/50 border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <HelpCircle className="w-5 h-5 text-gray-400" />
+                <span className="text-white">Ayuda y Soporte</span>
+              </div>
+              <span className="text-gray-400">{">"}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Cerrar Sesión */}
+      <Button variant="outline" className="w-full border-red-600 text-red-400 hover:bg-red-900/20">
+        <LogOut className="w-4 h-4 mr-2" />
+        Cerrar Sesión
+      </Button>
+    </div>
+  )
+}
+
+
+
+
+
+plan-financiero-screen.tsk
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
+import { TrendingUp, TrendingDown, Target, AlertCircle } from "lucide-react"
+
+export function PlanFinancieroScreen() {
+  const metaAhorro = 50000
+  const ahorroActual = 32500
+  const progresoAhorro = (ahorroActual / metaAhorro) * 100
+
+  const gastoSemanal = 3200
+  const limiteSemanal = 2800
+  const excedente = gastoSemanal - limiteSemanal
+
+  return (
+    <div className="p-4 pb-20 space-y-6">
+      {/* Header */}
+      <div className="pt-8">
+        <h1 className="text-2xl font-light text-gray-100">Plan Financiero</h1>
+        <p className="text-gray-400 text-sm">Seguimiento de metas y gastos</p>
+      </div>
+
+      {/* Meta de Ahorro */}
+      <Card className="bg-gray-800/50 border-gray-700">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg text-gray-100 flex items-center">
+            <Target className="w-5 h-5 mr-2 text-green-400" />
+            Meta de Ahorro 2024
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-300">Progreso</span>
+              <span className="text-gray-300">{progresoAhorro.toFixed(1)}%</span>
+            </div>
+            <Progress value={progresoAhorro} className="h-2" />
+          </div>
+
+          <div className="flex justify-between">
+            <div>
+              <p className="text-gray-400 text-xs">Ahorrado</p>
+              <p className="text-white font-medium">$32,500</p>
+            </div>
+            <div className="text-right">
+              <p className="text-gray-400 text-xs">Meta</p>
+              <p className="text-white font-medium">$50,000</p>
+            </div>
+          </div>
+
+          <div className="bg-green-900/20 border border-green-800/30 rounded-lg p-3">
+            <div className="flex items-center">
+              <TrendingUp className="w-4 h-4 text-green-400 mr-2" />
+              <span className="text-green-400 text-sm">En buen camino para alcanzar tu meta</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Gasto Semanal */}
+      <Card className="bg-gray-800/50 border-gray-700">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg text-gray-100 flex items-center">
+            <TrendingDown className="w-5 h-5 mr-2 text-orange-400" />
+            Gasto Semanal
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-300">Gastado esta semana</span>
+              <span className="text-gray-300">$3,200</span>
+            </div>
+            <Progress value={(gastoSemanal / limiteSemanal) * 100} className="h-2" />
+          </div>
+
+          <div className="flex justify-between">
+            <div>
+              <p className="text-gray-400 text-xs">Límite semanal</p>
+              <p className="text-white font-medium">$2,800</p>
+            </div>
+            <div className="text-right">
+              <p className="text-gray-400 text-xs">Excedente</p>
+              <p className="text-red-400 font-medium">+$400</p>
+            </div>
+          </div>
+
+          <div className="bg-red-900/20 border border-red-800/30 rounded-lg p-3">
+            <div className="flex items-center">
+              <AlertCircle className="w-4 h-4 text-red-400 mr-2" />
+              <span className="text-red-400 text-sm">Has excedido tu límite semanal</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Proyección Mensual */}
+      <Card className="bg-gray-800/50 border-gray-700">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg text-gray-100">Proyección del Mes</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-blue-900/20 rounded-lg p-3">
+              <p className="text-blue-400 text-xs">Ingresos estimados</p>
+              <p className="text-white font-medium">$18,500</p>
+            </div>
+            <div className="bg-orange-900/20 rounded-lg p-3">
+              <p className="text-orange-400 text-xs">Gastos proyectados</p>
+              <p className="text-white font-medium">$14,200</p>
+            </div>
+          </div>
+
+          <div className="bg-green-900/20 rounded-lg p-3">
+            <p className="text-green-400 text-xs">Ahorro proyectado</p>
+            <p className="text-white font-medium">$4,300</p>
+            <Badge variant="outline" className="mt-2 bg-green-900/20 text-green-400 border-green-600">
+              +12% vs mes anterior
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
